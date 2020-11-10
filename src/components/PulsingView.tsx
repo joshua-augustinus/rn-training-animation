@@ -1,6 +1,6 @@
 import React, { ReactNode, useEffect, useRef } from 'react';
 
-import { Alert, Animated, ViewStyle } from 'react-native';
+import { Animated, ViewStyle } from 'react-native';
 
 interface Props {
     style?: ViewStyle;
@@ -15,11 +15,12 @@ interface Props {
 
 const DEFAULT_DURATION = 800;
 const LOOP = 10;
+const USE_NATIVE_DRIVER = true; //Bug in react native will not reset animations properly if native driver = true
 
 const PulsingView = (props: Props) => {
     const scaleXValue = useRef(new Animated.Value(props.startValue)).current;
     const scaleYValue = useRef(new Animated.Value(props.startValue)).current;
-    const opacityValue = useRef(new Animated.Value(0.5)).current;
+    const opacityValue = useRef(new Animated.Value(1)).current;
 
     const duration = props.duration ? props.duration : DEFAULT_DURATION;
 
@@ -37,56 +38,40 @@ const PulsingView = (props: Props) => {
         if (!props.enableAnimations)
             return;
 
-        const animation1 = Animated.timing(scaleYValue, {
-            toValue: props.scaleY,
-            duration: duration,
-            useNativeDriver: true,
-        });
+        const forwardAnimation = createAnimationArray(props.scaleX, props.scaleY, 0, duration);
+        const resetAnimation = createAnimationArray(1, 1, 1, 0);
 
-        const animation2 = Animated.timing(opacityValue, {
-            toValue: 0,
-            duration: duration,
-            useNativeDriver: true,
-        });
-
-        const animation3 = Animated.timing(scaleXValue, {
-            toValue: props.scaleX,
-            duration: duration,
-            useNativeDriver: true,
-        });
-
-        const animated = Animated.parallel([
-            animation1, animation2, animation3
+        const animated = Animated.sequence([
+            forwardAnimation, resetAnimation
         ])
 
-        const reverse1 = Animated.timing(scaleYValue, {
-            toValue: props.startValue,
-            duration: 0,
-            useNativeDriver: true,
-        });
 
-        const reverse2 = Animated.timing(opacityValue, {
-            toValue: 1,
-            duration: 0,
-            useNativeDriver: true,
-        });
-
-        const reverse3 = Animated.timing(scaleXValue, {
-            toValue: props.startValue,
-            duration: 0,
-            useNativeDriver: true,
-        });
-
-        const animationReversed = Animated.parallel([
-            reverse1, reverse2, reverse3
-        ])
-
-        const pulse = Animated.sequence([animated, animationReversed]);
-
-        Animated.loop(pulse, {
-            iterations: LOOP
+        Animated.loop(animated, {
+            iterations: LOOP, resetBeforeIteration: true
         }).start();
     };
+
+    const createAnimationArray = (scaleX: number, scaleY: number, opacity: number, duration) => {
+        const animation1 = Animated.timing(scaleYValue, {
+            toValue: scaleY,
+            duration: duration,
+            useNativeDriver: USE_NATIVE_DRIVER,
+        });
+        const animation3 = Animated.timing(scaleXValue, {
+            toValue: scaleX,
+            duration: duration,
+            useNativeDriver: USE_NATIVE_DRIVER,
+        });
+        const animation2 = Animated.timing(opacityValue, {
+            toValue: opacity,
+            duration: duration,
+            useNativeDriver: USE_NATIVE_DRIVER,
+        });
+
+        return Animated.parallel([
+            animation1, animation2, animation3
+        ]);
+    }
 
 
 
