@@ -14,12 +14,15 @@ type Props = {
 const MasterScreen = (props: Props) => {
     const pulsingRef = useRef(null);
     const [score, setScore] = useState(0);
+    const [enableAnimations, setEnableAnimations] = useState(false);
 
     useEffect(() => {
         BackHandler.addEventListener('hardwareBackPress', function () {
             console.log("Back called");
             return true;
         });
+
+        setEnableAnimations(true);
     }, []);
 
     const onMenuPress = () => {
@@ -48,7 +51,7 @@ const MasterScreen = (props: Props) => {
                 <View style={styles.border}>
 
 
-                    <PulsingView score={score} startValue={1} scaleY={1.4} scaleX={1.1} duration={800}>
+                    <PulsingView enableAnimations={enableAnimations} score={score} startValue={1} scaleY={1.4} scaleX={1.1} duration={800}>
                         <View style={styles.pulseBackground} />
                     </PulsingView>
                     <View style={styles.wrapper}>

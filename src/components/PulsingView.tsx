@@ -9,13 +9,14 @@ interface Props {
     scaleY: number;
     startValue: number;
     duration?: number;
-    score: number
+    score: number,
+    enableAnimations: boolean
 }
 
 const DEFAULT_DURATION = 800;
 const LOOP = 10;
 
-const PulsingView: React.FunctionComponent<Props> = (props) => {
+const PulsingView = (props: Props) => {
     const scaleXValue = useRef(new Animated.Value(props.startValue)).current;
     const scaleYValue = useRef(new Animated.Value(props.startValue)).current;
     const opacityValue = useRef(new Animated.Value(0.5)).current;
@@ -33,6 +34,9 @@ const PulsingView: React.FunctionComponent<Props> = (props) => {
      * Animated scale Y
      */
     const startAnimation = () => {
+        if (!props.enableAnimations)
+            return;
+
         const animation1 = Animated.timing(scaleYValue, {
             toValue: props.scaleY,
             duration: duration,
