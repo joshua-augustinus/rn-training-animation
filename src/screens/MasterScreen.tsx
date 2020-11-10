@@ -1,5 +1,5 @@
 import { PulsingView } from '@src/components/PulsingView';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button, Text, TextInput, TouchableOpacity, View, BackHandler, StyleSheet } from 'react-native';
 import { SafeAreaView, StackActions } from 'react-navigation';
 import { DrawerActions, NavigationDrawerProp } from 'react-navigation-drawer';
@@ -12,6 +12,8 @@ type Props = {
 }
 
 const MasterScreen = (props: Props) => {
+    const pulsingRef = useRef(null);
+    const [score, setScore] = useState(0);
 
     useEffect(() => {
         BackHandler.addEventListener('hardwareBackPress', function () {
@@ -21,20 +23,11 @@ const MasterScreen = (props: Props) => {
     }, []);
 
     const onMenuPress = () => {
-        console.log(props.navigation.state);// { key: 'Home', routeName: 'Home' }
-        console.log("Menu pressed");
-        props.navigation.dispatch(DrawerActions.toggleDrawer());
+        pulsingRef.current.startAnimation();
     }
 
     const onButtonPress = () => {
-        const pushAction = StackActions.push({
-            routeName: 'Stack1',
-            params: {
-                myUserId: 9,
-            },
-        });
-
-        props.navigation.dispatch(pushAction);
+        setScore((score + 1));
     }
 
 
@@ -48,14 +41,18 @@ const MasterScreen = (props: Props) => {
                 </TouchableOpacity>
             </View>
             <View style={styles.container}>
+                <TouchableOpacity style={{ backgroundColor: 'yellow' }}
+                    onPress={() => onButtonPress()}>
+                    <Text>Increase Score</Text>
+                </TouchableOpacity>
                 <View style={styles.border}>
 
 
-                    <PulsingView startValue={1} scaleY={1.4} scaleX={1.1} duration={800}>
+                    <PulsingView score={score} startValue={1} scaleY={1.4} scaleX={1.1} duration={800}>
                         <View style={styles.pulseBackground} />
                     </PulsingView>
                     <View style={styles.wrapper}>
-                        <Text>Blah</Text>
+                        <Text>{score}</Text>
                     </View>
                 </View>
 

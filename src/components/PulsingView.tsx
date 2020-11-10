@@ -9,6 +9,7 @@ interface Props {
     scaleY: number;
     startValue: number;
     duration?: number;
+    score: number
 }
 
 const DEFAULT_DURATION = 800;
@@ -23,11 +24,15 @@ const PulsingView: React.FunctionComponent<Props> = (props) => {
 
     let transformArray = [{ scaleX: scaleXValue }, { scaleY: scaleYValue }];
 
+    useEffect(() => {
+        startAnimation();
+    }, [props.score])
+
 
     /**
      * Animated scale Y
      */
-    useEffect(() => {
+    const startAnimation = () => {
         const animation1 = Animated.timing(scaleYValue, {
             toValue: props.scaleY,
             duration: duration,
@@ -77,7 +82,7 @@ const PulsingView: React.FunctionComponent<Props> = (props) => {
         Animated.loop(pulse, {
             iterations: LOOP
         }).start();
-    }, [props.scaleY]);
+    };
 
 
 
