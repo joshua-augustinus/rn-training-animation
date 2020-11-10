@@ -47,11 +47,11 @@ const MasterScreen = (props: Props) => {
                     <Text>Menu</Text>
                 </TouchableOpacity>
             </View>
-            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                <View style={{ height: 50, width: 200 }}>
+            <View style={styles.container}>
+                <View style={styles.border}>
 
 
-                    <PulsingView startValue={1} toValue={5}>
+                    <PulsingView startValue={1} scaleY={1.4} scaleX={1.1} duration={800}>
                         <View style={styles.pulseBackground} />
                     </PulsingView>
                     <View style={styles.wrapper}>
@@ -79,11 +79,26 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: 'red'
+        backgroundColor: 'white',
+        borderWidth: 1,
+        borderColor: 'blue',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 100
     },
     pulseBackground: {
         backgroundColor: 'blue',
         width: '100%',
-        height: '100%'
+        height: '100%',
+        borderRadius: 100
+    },
+    container: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    border: {
+        height: 50,
+        width: 200
     }
 })
